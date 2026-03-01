@@ -7,7 +7,8 @@
 		"download": "curl -O https://models.dev/api.json",
 		"convert": "bun ./src/convert.ts",
 		"test": "bun test src/convert.test.ts",
-		"format": "./node_modules/.bin/biome format --write",
+		"format": "./node_modules/.bin/biome format --write && ./node_modules/.bin/biome check --fix",
+		"check": "./node_modules/.bin/biome ci",
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
