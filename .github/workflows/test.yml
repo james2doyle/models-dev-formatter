@@ -20,6 +20,9 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Download api.json
+        run: bun run download
+
       - name: Run tests
         run: bun test
 
