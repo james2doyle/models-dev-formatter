@@ -25,7 +25,7 @@ export const gooseConverter: FormatConverter = {
 		const baseUrl = provider.api ? `${provider.api}/chat/completions` : "";
 
 		const output: GooseOutput = {
-			name: providerSlug,
+			name: `custom_${providerSlug}`,
 			engine: "openai",
 			display_name: provider.name,
 			description: `Custom ${provider.name}`,

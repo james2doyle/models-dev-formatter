@@ -132,7 +132,7 @@ describe("goose converter", () => {
 		const output = gooseConverter.convert({ provider, models });
 		const parsed = JSON.parse(output);
 
-		expect(parsed.name).toBe("zenmux");
+		expect(parsed.name).toBe("custom_zenmux");
 		expect(parsed.engine).toBe("openai");
 		expect(parsed.display_name).toBe("ZenMux");
 		expect(parsed.description).toBe("Custom ZenMux");
@@ -159,7 +159,7 @@ describe("goose converter", () => {
 		const output = gooseConverter.convert({ provider, models });
 		const parsed = JSON.parse(output);
 
-		expect(parsed.name).toBe("nvidia");
+		expect(parsed.name).toBe("custom_nvidia");
 		expect(parsed.engine).toBe("openai");
 		expect(parsed.display_name).toBe("Nvidia");
 		expect(parsed.description).toBe("Custom Nvidia");
@@ -186,7 +186,7 @@ describe("goose converter", () => {
 		const output = gooseConverter.convert({ provider, models });
 		const parsed = JSON.parse(output);
 
-		expect(parsed.name).toBe("hugging_face");
+		expect(parsed.name).toBe("custom_hugging_face");
 		expect(parsed.display_name).toBe("Hugging Face");
 		expect(parsed.base_url).toBe(
 			"https://router.huggingface.co/v1/chat/completions",
@@ -198,7 +198,7 @@ describe("goose converter", () => {
 		const output = gooseConverter.convert({ provider, models });
 		const parsed = JSON.parse(output);
 
-		expect(parsed.name).toBe("opencode_zen");
+		expect(parsed.name).toBe("custom_opencode_zen");
 		expect(parsed.engine).toBe("openai");
 		expect(parsed.display_name).toBe("OpenCode Zen");
 		expect(parsed.description).toBe("Custom OpenCode Zen");
