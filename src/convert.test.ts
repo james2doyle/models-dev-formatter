@@ -68,6 +68,31 @@ describe("crush converter", () => {
 		expect(parsed["hugging-face"].id).toBe("hugging-face");
 		expect(parsed["hugging-face"].api_key).toBe("$HF_TOKEN");
 	});
+
+	it("converts opencode to crush format", async () => {
+		const { provider, models } = await loadProvider("opencode");
+		const output = crushConverter.convert({ provider, models });
+		const parsed = JSON.parse(output);
+
+		expect(parsed["opencode-zen"]).toBeDefined();
+		expect(parsed["opencode-zen"].name).toBe("OpenCode Zen");
+		expect(parsed["opencode-zen"].id).toBe("opencode-zen");
+		expect(parsed["opencode-zen"].api_key).toBe("$OPENCODE_API_KEY");
+		expect(parsed["opencode-zen"].base_url).toBe("https://opencode.ai/zen/v1");
+		expect(parsed["opencode-zen"].type).toBe("openai-compatible");
+		expect(Array.isArray(parsed["opencode-zen"].models)).toBe(true);
+
+		// Check first model structure
+		const firstModel = parsed["opencode-zen"].models[0];
+		expect(firstModel).toHaveProperty("id");
+		expect(firstModel).toHaveProperty("name");
+		expect(firstModel).toHaveProperty("cost_per_1m_in");
+		expect(firstModel).toHaveProperty("cost_per_1m_out");
+		expect(firstModel).toHaveProperty("context_window");
+		expect(firstModel).toHaveProperty("can_reason");
+		expect(firstModel).toHaveProperty("supports_attachments");
+		expect(firstModel).toHaveProperty("options");
+	});
 });
 
 describe("goose converter", () => {
@@ -109,6 +134,31 @@ describe("goose converter", () => {
 			"https://router.huggingface.co/v1/chat/completions",
 		);
 	});
+
+	it("converts opencode to goose format", async () => {
+		const { provider, models } = await loadProvider("opencode");
+		const output = gooseConverter.convert({ provider, models });
+		const parsed = JSON.parse(output);
+
+		expect(parsed.name).toBe("opencode_zen");
+		expect(parsed.engine).toBe("openai");
+		expect(parsed.display_name).toBe("OpenCode Zen");
+		expect(parsed.description).toBe("Custom OpenCode Zen");
+		expect(parsed.api_key_env).toBe("OPENCODE_API_KEY");
+		expect(parsed.base_url).toBe("https://opencode.ai/zen/v1/chat/completions");
+		expect(parsed.supports_streaming).toBe(true);
+		expect(parsed.requires_auth).toBe(true);
+		expect(Array.isArray(parsed.models)).toBe(true);
+
+		// Check first model structure
+		const firstModel = parsed.models[0];
+		expect(firstModel).toHaveProperty("name");
+		expect(firstModel).toHaveProperty("context_limit");
+		expect(firstModel).toHaveProperty("input_token_cost");
+		expect(firstModel).toHaveProperty("output_token_cost");
+		expect(firstModel.currency).toBe("USD");
+		expect(firstModel.supports_cache_control).toBeNull();
+	});
 });
 
 describe("vibe converter", () => {
@@ -145,5 +195,20 @@ describe("vibe converter", () => {
 		if (output.includes('alias = "MiMo-Flash"')) {
 			expect(output).toContain('alias = "MiMo-Flash"');
 		}
+	});
+
+	it("converts opencode to vibe format", async () => {
+		const { provider, models } = await loadProvider("opencode");
+		const output = vibeConverter.convert({ provider, models });
+
+		// Check TOML structure
+		expect(output).toContain("[[providers]]");
+		expect(output).toContain('name = "opencode-zen"');
+		expect(output).toContain('api_base = "https://opencode.ai/zen/v1"');
+		expect(output).toContain('api_key_env_var = "OPENCODE_API_KEY"');
+		expect(output).toContain('api_style = "openai"');
+		expect(output).toContain('backend = "generic"');
+		expect(output).toContain("[[models]]");
+		expect(output).toContain('provider = "opencode-zen"');
 	});
 });
