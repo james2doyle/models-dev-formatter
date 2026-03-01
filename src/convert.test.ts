@@ -58,6 +58,31 @@ describe("crush converter", () => {
 		expect(firstModel).toHaveProperty("options");
 	});
 
+	it("converts nvidia to crush format", async () => {
+		const { provider, models } = await loadProvider("nvidia");
+		const output = crushConverter.convert({ provider, models });
+		const parsed = JSON.parse(output);
+
+		expect(parsed.nvidia).toBeDefined();
+		expect(parsed.nvidia.name).toBe("Nvidia");
+		expect(parsed.nvidia.id).toBe("nvidia");
+		expect(parsed.nvidia.api_key).toBe("$NVIDIA_API_KEY");
+		expect(parsed.nvidia.base_url).toBe("https://integrate.api.nvidia.com/v1");
+		expect(parsed.nvidia.type).toBe("openai-compatible");
+		expect(Array.isArray(parsed.nvidia.models)).toBe(true);
+
+		// Check first model structure
+		const firstModel = parsed.nvidia.models[0];
+		expect(firstModel).toHaveProperty("id");
+		expect(firstModel).toHaveProperty("name");
+		expect(firstModel).toHaveProperty("cost_per_1m_in");
+		expect(firstModel).toHaveProperty("cost_per_1m_out");
+		expect(firstModel).toHaveProperty("context_window");
+		expect(firstModel).toHaveProperty("can_reason");
+		expect(firstModel).toHaveProperty("supports_attachments");
+		expect(firstModel).toHaveProperty("options");
+	});
+
 	it("converts huggingface to crush format with kebab-case slug", async () => {
 		const { provider, models } = await loadProvider("huggingface");
 		const output = crushConverter.convert({ provider, models });
@@ -108,6 +133,33 @@ describe("goose converter", () => {
 		expect(parsed.api_key_env).toBe("ZENMUX_API_KEY");
 		expect(parsed.base_url).toBe(
 			"https://zenmux.ai/api/anthropic/v1/chat/completions",
+		);
+		expect(parsed.supports_streaming).toBe(true);
+		expect(parsed.requires_auth).toBe(true);
+		expect(Array.isArray(parsed.models)).toBe(true);
+
+		// Check first model structure
+		const firstModel = parsed.models[0];
+		expect(firstModel).toHaveProperty("name");
+		expect(firstModel).toHaveProperty("context_limit");
+		expect(firstModel).toHaveProperty("input_token_cost");
+		expect(firstModel).toHaveProperty("output_token_cost");
+		expect(firstModel.currency).toBe("USD");
+		expect(firstModel.supports_cache_control).toBeNull();
+	});
+
+	it("converts nvidia to goose format", async () => {
+		const { provider, models } = await loadProvider("nvidia");
+		const output = gooseConverter.convert({ provider, models });
+		const parsed = JSON.parse(output);
+
+		expect(parsed.name).toBe("nvidia");
+		expect(parsed.engine).toBe("openai");
+		expect(parsed.display_name).toBe("Nvidia");
+		expect(parsed.description).toBe("Custom Nvidia");
+		expect(parsed.api_key_env).toBe("NVIDIA_API_KEY");
+		expect(parsed.base_url).toBe(
+			"https://integrate.api.nvidia.com/v1/chat/completions",
 		);
 		expect(parsed.supports_streaming).toBe(true);
 		expect(parsed.requires_auth).toBe(true);
@@ -175,6 +227,23 @@ describe("vibe converter", () => {
 		expect(output).toContain('backend = "generic"');
 		expect(output).toContain("[[models]]");
 		expect(output).toContain("temperature = 0.2");
+	});
+
+	it("converts nvidia to vibe format", async () => {
+		const { provider, models } = await loadProvider("nvidia");
+		const output = vibeConverter.convert({ provider, models });
+
+		// Check TOML structure
+		expect(output).toContain("[[providers]]");
+		expect(output).toContain('name = "nvidia"');
+		expect(output).toContain(
+			'api_base = "https://integrate.api.nvidia.com/v1"',
+		);
+		expect(output).toContain('api_key_env_var = "NVIDIA_API_KEY"');
+		expect(output).toContain('api_style = "openai"');
+		expect(output).toContain('backend = "generic"');
+		expect(output).toContain("[[models]]");
+		expect(output).toContain('provider = "nvidia"');
 	});
 
 	it("converts huggingface to vibe format with version-stripped aliases", async () => {
