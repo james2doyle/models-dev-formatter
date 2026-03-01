@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
-import type { Model, Provider } from "models.dev";
 import path from "node:path";
+import type { Model, Provider } from "models.dev";
 import { getConverter, listFormats } from "./formats/index";
 
 interface ApiJson {
@@ -100,15 +100,6 @@ async function main(): Promise<void> {
 			process.exit(1);
 		}
 
-		const provider: Provider = {
-			id: providerData.id,
-			env: providerData.env,
-			npm: providerData.npm,
-			name: providerData.name,
-			doc: providerData.doc,
-			api: providerData.api,
-		};
-
 		const models = Object.values(providerData.models);
 
 		if (models.length === 0) {
@@ -116,7 +107,7 @@ async function main(): Promise<void> {
 			process.exit(1);
 		}
 
-		const output = converter.convert({ provider, models });
+		const output = converter.convert({ provider: providerData, models });
 		console.log(output);
 	} catch (error) {
 		console.error("Error:", error instanceof Error ? error.message : error);

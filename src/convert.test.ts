@@ -28,17 +28,8 @@ async function loadProvider(
 		throw new Error(`Provider "${name}" not found in api.json`);
 	}
 
-	const provider: Provider = {
-		id: providerData.id,
-		env: providerData.env,
-		npm: providerData.npm,
-		name: providerData.name,
-		doc: providerData.doc,
-		api: providerData.api,
-	};
-
 	const models = Object.values(providerData.models);
-	return { provider, models };
+	return { provider: providerData, models };
 }
 
 describe("crush converter", () => {
