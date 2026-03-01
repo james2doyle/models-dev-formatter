@@ -52,10 +52,16 @@ describe("crush converter", () => {
 		expect(firstModel).toHaveProperty("name");
 		expect(firstModel).toHaveProperty("cost_per_1m_in");
 		expect(firstModel).toHaveProperty("cost_per_1m_out");
+		expect(firstModel).toHaveProperty("cost_per_1m_in_cached");
+		expect(firstModel).toHaveProperty("cost_per_1m_out_cached");
 		expect(firstModel).toHaveProperty("context_window");
 		expect(firstModel).toHaveProperty("can_reason");
 		expect(firstModel).toHaveProperty("supports_attachments");
 		expect(firstModel).toHaveProperty("options");
+
+		// Verify cached costs are numbers (not null) per schema
+		expect(typeof firstModel.cost_per_1m_in_cached).toBe("number");
+		expect(typeof firstModel.cost_per_1m_out_cached).toBe("number");
 	});
 
 	it("converts nvidia to crush format", async () => {

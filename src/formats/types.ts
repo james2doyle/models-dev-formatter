@@ -16,8 +16,8 @@ export interface CrushModel {
 	name: string;
 	cost_per_1m_in: number;
 	cost_per_1m_out: number;
-	cost_per_1m_in_cached: number | null;
-	cost_per_1m_out_cached: number | null;
+	cost_per_1m_in_cached: number;
+	cost_per_1m_out_cached: number;
 	context_window: number;
 	default_max_tokens: number;
 	can_reason: boolean;
